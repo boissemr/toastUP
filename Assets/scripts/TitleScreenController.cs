@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityStandardAssets.ImageEffects;
 
 public class TitleScreenController : MonoBehaviour {
 
@@ -19,6 +20,8 @@ public class TitleScreenController : MonoBehaviour {
 	// variables
 	float	timer;
 	int		currentCamWaypoint;
+	float	currentCamLerp;
+	DepthOfField dof;
 
 	void Start() {
 
@@ -26,7 +29,11 @@ public class TitleScreenController : MonoBehaviour {
 		timer = secondsToWait;
 		screenLight.intensity = defaultLightIntensity;
 		screen.sprite = sprites[0];
-		currentCamWaypoint = 0;
+		cam.transform.position = camWaypoints[0].position;
+		cam.transform.rotation = camWaypoints[0].rotation;
+		currentCamWaypoint = 1;
+		currentCamLerp = camLerp;
+		dof = cam.GetComponent<DepthOfField>();
 	}
 
 	void Update() {
@@ -50,22 +57,23 @@ public class TitleScreenController : MonoBehaviour {
 			}
 		}
 
-		// intro camera movement
-		if(currentCamWaypoint != camWaypoints.Length) {
+		// camera movement
+		if(Vector3.Distance(cam.transform.position, camWaypoints[currentCamWaypoint].position) > 0.5) {
 
 			// move camera along waypoints
-			cam.transform.position = Vector3.Lerp(cam.transform.position, camWaypoints[currentCamWaypoint].position, camLerp);
-			cam.transform.LookAt(Vector3.zero);
+			cam.transform.position = Vector3.Lerp(cam.transform.position, camWaypoints[currentCamWaypoint].position, currentCamLerp * Time.deltaTime);
+			cam.transform.rotation = Quaternion.Lerp(cam.transform.rotation, camWaypoints[currentCamWaypoint].rotation, currentCamLerp * Time.deltaTime);
+			dof.focalTransform = camWaypoints[currentCamWaypoint].GetComponentInChildren<FocusOn>().transform;
+			dof.focalSize = Mathf.Lerp(dof.focalSize, Vector3.Distance(dof.focalTransform.position, cam.transform.position) / 100, currentCamLerp * Time.deltaTime);
 
-			// advance waypoints when destination is reached
-			if(Vector3.Distance(cam.transform.position, camWaypoints[currentCamWaypoint].position) < 0.5) {
-				currentCamWaypoint++;
-			}
-
-			// skip intro camera movement with any input
+			// skip camera movement with any input
 			if(Input.anyKeyDown) {
-				camLerp = .7f;
+				currentCamLerp *= 10;
 			}
+		} else {
+
+			// reset lerp speed
+			currentCamLerp = camLerp;
 		}
 	}
 
@@ -76,7 +84,8 @@ public class TitleScreenController : MonoBehaviour {
 
 	// button handlers
 	void startButtonPressed() {
-		Debug.Log("start button pressed");
+		Debug.Log("start button pressed, moving to map select");
+		currentCamWaypoint = 2;
 	}
 	void configureButtonPressed() {
 		Debug.Log("config button pressed");
@@ -89,5 +98,18 @@ public class TitleScreenController : MonoBehaviour {
 
 		// quit from build
 		Application.Quit();
+	}
+	void mapSelected() {
+		var map = 0;
+		Debug.Log("map #" + map + " selected");
+		currentCamWaypoint = 3;
+	}
+	void characterSelected() {
+		var character = 0;
+		Debug.Log("character #" + character + " selected");
+		Application.LoadLevel("map0");
+	}
+	void backButtonPressed() {
+		currentCamWaypoint -= 1;
 	}
 }
