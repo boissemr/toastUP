@@ -22,15 +22,6 @@ public class RoomController : MonoBehaviour {
 		}
 	}
 
-	void OnMouseDown() {
-
-		bachelor.setDestination(this);
-
-        foreach(RoomController o in adjacentRooms) {
-            Debug.Log(o.gameObject.name);
-		}
-	}
-
 	void OnMouseOver() {
 
         foreach(RoomController o in adjacentRooms) {

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class God : MonoBehaviour {
 
+	// parameters
 	public float		beatsPerMinute;
 	public int			phaseLength,
 						beatsPerAction;
@@ -12,6 +13,7 @@ public class God : MonoBehaviour {
 	public Image		progressBar;
 	public AudioClip[]	jams;
 
+	// varialbes
 	int					phase;
 	float				beats,
 						seconds,
@@ -68,17 +70,20 @@ public class God : MonoBehaviour {
 	}
 
 	void takeAction() {
-
 		foreach(GameObject o in GameObject.FindGameObjectsWithTag("player")) {
-
-			/*
-			GameObject[] rooms = GameObject.FindGameObjectsWithTag("room");
-			o.GetComponentInChildren<BachelorController>().setDestination(rooms[Random.Range(0, rooms.Length)].GetComponent<RoomController>());
-			*/
-
+			
 			BachelorController b = o.GetComponentInChildren<BachelorController>();
-			RoomController[] rooms = b.getCurrentRoom().getAdjacentRooms(true);
-			b.setDestination(rooms[Random.Range(0, rooms.Length)].GetComponent<RoomController>());
+
+			if(b.AI) {
+
+				// move AI randomly around
+				RoomController[] rooms = b.getCurrentRoom().getAdjacentRooms(true);
+				b.setDestination(rooms[Random.Range(0, rooms.Length)].GetComponent<RoomController>());
+			} else {
+				
+				// move player to room colliding with cursor
+
+			}
 		}
 	}
 }
