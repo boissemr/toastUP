@@ -75,15 +75,20 @@ public class God : MonoBehaviour {
 			BachelorController b = o.GetComponentInChildren<BachelorController>();
 
 			if(b.AI) {
+				b.setAIDestination();
+			}
 
-				// move AI randomly around
-				RoomController[] rooms = b.getCurrentRoom().getAdjacentRooms(true);
-				b.setDestination(rooms[Random.Range(0, rooms.Length)].GetComponent<RoomController>());
-			} else {
-				
-				// move player to room colliding with cursor
+			b.go();
+		}
+	}
 
+	public RoomController getNearestRoom(RoomController[] rooms, Vector3 position) {
+		RoomController nearestRoom = rooms[0];
+		for(int i = 1; i < rooms.Length; i++) {
+			if(Vector3.Distance(rooms[i].transform.position, position) < Vector3.Distance(nearestRoom.transform.position, position)) {
+				nearestRoom = rooms[i];
 			}
 		}
+		return nearestRoom;
 	}
 }

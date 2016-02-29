@@ -18,7 +18,7 @@ public class RoomController : MonoBehaviour {
 	void OnTriggerEnter(Collider c) {
 
 		if(c.gameObject.CompareTag("room")) {
-            adjacentRooms.Add(c.gameObject.GetComponent<RoomController>());
+			adjacentRooms.Add(c.gameObject.GetComponent<RoomController>());
 		}
 	}
 
