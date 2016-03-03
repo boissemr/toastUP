@@ -7,6 +7,7 @@ public class RoomController : MonoBehaviour {
 	public bool isBakery;
 	public bool isRoom;
 	public BachelorController whoseRoom;
+	public int loafSize;
 
     List<RoomController> adjacentRooms;
 

@@ -1,13 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class BachelorController : MonoBehaviour {
 
 	// parameters
 	public bool			AI;
 	public float		cursorReach,
-						cursorLerp;
+						cursorLerp,
+						toastSpawnSpacing,
+						toasterForce;
+	public GameObject	toastPrefab;
+	public Vector3		toastSpawnPosition;
+	public int			toasterCapacity;
 
 	// variables
 	NavMeshAgent		agent;
@@ -15,10 +21,12 @@ public class BachelorController : MonoBehaviour {
 						destinationRoom,
 						AIDestinationRoom;
 	CursorController	cursor;
+	GameObject			toaster;
 	Text				info;
 	int					bread,
 						toast,
 						love;
+	List<GameObject>	toastObjects;
 
 	void Start() {
 
@@ -28,9 +36,13 @@ public class BachelorController : MonoBehaviour {
 		agent = GetComponent<NavMeshAgent>();
 		cursor = GetComponentInChildren<CursorController>();
 		info = GetComponentInChildren<Text>();
-		bread = 0;
+		foreach(GameObject o in GameObject.FindGameObjectsWithTag("toaster"))
+			if(o.transform.IsChildOf(transform.parent))
+				toaster = o;
+		bread = 500;
 		toast = 0;
 		love = 0;
+		toastObjects = new List<GameObject>();
 	}
 
 	void Update() {
@@ -62,13 +74,31 @@ public class BachelorController : MonoBehaviour {
 
 		// increment bread if in bakery
 		if(currentRoom.isBakery) {
-			bread++;
+			bread += currentRoom.loafSize;
 		}
 
 		// increment toast if in room
-		if(currentRoom.isRoom && currentRoom.whoseRoom == this && bread > 0) {
-			bread--;
-			toast++;
+		if(currentRoom.isRoom && currentRoom.whoseRoom == this) {
+			for(int i = 0; i < toasterCapacity; i++) {
+				if(bread > 0) {
+
+					// adjust values
+					bread--;
+					toast++;
+
+					toastObjects.Add(toaster.GetComponent<Toaster>().makeToast(i));
+
+					/*
+					// instantiate toast object
+					Quaternion tempRotation = Quaternion.Euler(Random.Range(-10, 10), Random.Range(-10, 10), Random.Range(-10, 10));
+					Vector3 tempPosition = toaster.transform.position + toastSpawnPosition + (Vector3.forward * i * toastSpawnSpacing) + (Vector3.back * toastSpawnSpacing / 2);
+					toastObjects.Add((GameObject)Instantiate(toastPrefab, tempPosition, tempRotation));
+
+					// apply force on toast so it pops up
+					toastObjects[toastObjects.Count - 1].GetComponent<Rigidbody>().AddRelativeForce(tempRotation * Vector3.up * toasterForce);
+					*/
+				}
+			}
 		}
 
 		// update info
