@@ -4,33 +4,32 @@ using System.Collections.Generic;
 
 public class RoomController : MonoBehaviour {
 
-	public BachelorController bachelor;
+	public bool isBakery;
+	public bool isRoom;
+	public BachelorController whoseRoom;
 
     List<RoomController> adjacentRooms;
 
 	void Start() {
 
+		// hide the room Collider when game starts
 		GetComponent<MeshRenderer>().enabled = false;
 
+		// initialize
         adjacentRooms = new List<RoomController>();
 	}
 
 	void OnTriggerEnter(Collider c) {
 
+		// find adjacentRooms rooms
 		if(c.gameObject.CompareTag("room")) {
 			adjacentRooms.Add(c.gameObject.GetComponent<RoomController>());
 		}
 	}
 
-	void OnMouseOver() {
-
-        foreach(RoomController o in adjacentRooms) {
-			Debug.DrawLine(transform.position, o.transform.position);
-		}
-	}
-
 	public RoomController[] getAdjacentRooms(bool includeSelf) {
 
+		// return adjacent rooms and this room
 		if(includeSelf) {
 			adjacentRooms.Add(this);
 			RoomController[] returnMe = adjacentRooms.ToArray();
@@ -38,6 +37,7 @@ public class RoomController : MonoBehaviour {
 			return returnMe;
 		}
 
+		// returnMe adjacent rooms
 		return adjacentRooms.ToArray();
 	}
 }

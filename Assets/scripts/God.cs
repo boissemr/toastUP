@@ -71,7 +71,7 @@ public class God : MonoBehaviour {
 
 	void takeAction() {
 		foreach(GameObject o in GameObject.FindGameObjectsWithTag("player")) {
-			
+
 			BachelorController b = o.GetComponentInChildren<BachelorController>();
 
 			if(b.AI) {

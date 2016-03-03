@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class BachelorController : MonoBehaviour {
 
@@ -14,23 +15,31 @@ public class BachelorController : MonoBehaviour {
 						destinationRoom,
 						AIDestinationRoom;
 	CursorController	cursor;
+	Text				info;
+	int					bread,
+						toast,
+						love;
 
 	void Start() {
 
 		// initalize compoents
-		currentRoom = GameObject.Find("northRoom").GetComponent<RoomController>();
+		currentRoom = GameObject.Find("hall").GetComponent<RoomController>();
 		AIDestinationRoom = currentRoom;
 		agent = GetComponent<NavMeshAgent>();
 		cursor = GetComponentInChildren<CursorController>();
+		info = GetComponentInChildren<Text>();
+		bread = 0;
+		toast = 0;
+		love = 0;
 	}
 
 	void Update() {
 
+		// AI cursor
 		if(AI) {
-			// AI controlled
-			cursor.transform.position = Vector3.Lerp(cursor.transform.position, AIDestinationRoom.transform.position, cursorLerp * Time.deltaTime);
+			cursor.transform.position = Vector3.Lerp(cursor.transform.position, AIDestinationRoom.transform.position + Vector3.up, cursorLerp * Time.deltaTime);
+		// human cursor
 		} else {
-			// human player controlled
 			cursor.transform.localPosition = Vector3.Lerp(cursor.transform.localPosition, new Vector3(Input.GetAxis("Horizontal") * cursorReach, 1f, Input.GetAxis("Vertical") * cursorReach), cursorLerp * Time.deltaTime);
 		}
 
@@ -51,6 +60,20 @@ public class BachelorController : MonoBehaviour {
 	// go to this player's destination
 	public void go() {
 
+		// increment bread if in bakery
+		if(currentRoom.isBakery) {
+			bread++;
+		}
+
+		// increment toast if in room
+		if(currentRoom.isRoom && currentRoom.whoseRoom == this && bread > 0) {
+			bread--;
+			toast++;
+		}
+
+		// update info
+		updateInfo();
+
 		// set destinationRoom to room that is nearest to cursor
 		destinationRoom = GameObject.Find("god").GetComponent<God>().getNearestRoom(getCurrentRoom().getAdjacentRooms(true), cursor.transform.position);
 
@@ -62,5 +85,9 @@ public class BachelorController : MonoBehaviour {
 	// return this palyer's current room
     public RoomController getCurrentRoom() {
 		return currentRoom;
+	}
+
+	public void updateInfo() {
+		info.text = bread + " / " + toast + " / " + love;
 	}
 }
