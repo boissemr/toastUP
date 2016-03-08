@@ -94,7 +94,7 @@ public class TitleScreenController : MonoBehaviour {
 		Debug.Log("exit button pressed");
 
 		// quit from editor
-		UnityEditor.EditorApplication.isPlaying = false;
+		//UnityEditor.EditorApplication.isPlaying = false;
 
 		// quit from build
 		Application.Quit();

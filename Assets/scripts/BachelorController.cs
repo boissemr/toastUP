@@ -39,7 +39,7 @@ public class BachelorController : MonoBehaviour {
 		foreach(GameObject o in GameObject.FindGameObjectsWithTag("toaster"))
 			if(o.transform.IsChildOf(transform.parent))
 				toaster = o;
-		bread = 500;
+		bread = 0;
 		toast = 0;
 		love = 0;
 		toastObjects = new List<GameObject>();
