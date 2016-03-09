@@ -94,6 +94,7 @@ public class TitleScreenController : MonoBehaviour {
 		Debug.Log("exit button pressed");
 
 		// quit from editor
+		// this prevents the game from making a build for some reason
 		//UnityEditor.EditorApplication.isPlaying = false;
 
 		// quit from build
